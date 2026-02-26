@@ -1,42 +1,37 @@
-/**
- * Find the 'compute' iframe window within the document if it isn't
- * already the current window in devtools.
- */
-const computeWindow = document.querySelector("#compute-wrapper")
-	? window
-	: document.querySelector("#sandbox-compute-container")?.contentWindow;
-if (!computeWindow)
-	throw new Error("Failed to find iframe window");
+const findElement_script = (selector) => document.querySelector(selector);
 
-const createBtn = computeWindow.document.querySelector(".oui-savant__Panel--Footer .oui-button.oui-button-primary");
-if (!createBtn || createBtn.textContent !== "Create")
-	throw new Error("Failed to find 'Create' button");
+const findElementByText_script = (selector, text) => {
+	const elements = document.querySelectorAll(selector);
+	for (const el of elements) {
+		if (el.textContent.trim() === text || el.getAttribute('aria-label') === text) {
+			return el;
+		}
+	}
+	return null;
+};
 
-const contentsElmt = computeWindow.document.querySelector(".oui-savant__Panel--Contents");
-if (!contentsElmt)
+const btnCreate_script = findElementByText_script('button', 'Create');
+if (!btnCreate_script) {
+    throw new Error("Failed to find 'Create' button");
+}
+
+const contentsElmt_script = document.body;
+const headerElmt_script = findElement_script('header') || document.querySelector('header') || document.body;
+
+if (!contentsElmt_script)
 	throw new Error("Failed to find contents element");
 
-const headerElmt = computeWindow.document.querySelector(".oui-savant__Panel--Header");
-if (!headerElmt)
+if (!headerElmt_script)
 	throw new Error("Failed to find header element");
 
-/**
- * Create a new window to cloud.oracle.com, and then periodically
- * refresh it.
- * 
- * We need to periodically regenerate your session token as it
- * will probably expire too soon - this script might be running
- * for a long time!
- */
-const sessionWindow = window.open(
+const sessionWindow_script = window.open(
 	"https://cloud.oracle.com",
 	"_blank",
 	"height=400,width=400;popup=true"
 );
 
-//create the status bar
-const statusElmt = document.createElement("div");
-statusElmt.setAttribute("style", `
+const statusElmt_script = document.createElement("div");
+statusElmt_script.setAttribute("style", `
 	z-index: 9999999999999;
 	position: fixed;
 	top: 0;
@@ -52,43 +47,48 @@ statusElmt.setAttribute("style", `
 	white-space: break-spaces;
 `);
 
-/**
- * Set the status bar to be the same height as the header.
- */
-const setStatusHeight = () => {
-	statusElmt.style.height = `${headerElmt.clientHeight}px`;
+const setStatusHeight_script = () => {
+	if (headerElmt_script?.clientHeight) {
+		statusElmt_script.style.height = `${headerElmt_script.clientHeight}px`;
+	} else {
+		statusElmt_script.style.height = '60px';
+	}
 };
 
-setStatusHeight();
-computeWindow.addEventListener("resize", setStatusHeight);
-contentsElmt.prepend(statusElmt);
+setStatusHeight_script();
+window.addEventListener("resize", setStatusHeight_script);
+contentsElmt_script.prepend(statusElmt_script);
 
-const logStyle = color => `background-color: #222; color: ${color}`;
+const logStyle_script = color => `background-color: #222; color: ${color}`;
 
 console.clear();
 
 console.info(
 	"%c *** Started Oracle compute instance creation script *** ",
-	logStyle("#e0b414")
+	logStyle_script("#e0b414")
 );
 console.info(
 	"%c *** DO NOT CLOSE THE POPUP WINDOW! *** ",
-	logStyle("#ff4d4d")
+	logStyle_script("#ff4d4d")
 );
 console.info(
 	"%c *** Filter logs with '***' to only show outputs from this script. *** ",
-	logStyle("#f0dd99")
+	logStyle_script("#f0dd99")
 );
 console.info(
 	"%c *** It's advised to close dev tools while the script is running, as over long periods of time it may crash (Oracle's fault). *** ",
-	logStyle("#f0dd99")
+	logStyle_script("#f0dd99")
 );
 console.info(
-	"%c *** You can change the interval duration between clicks on the fly by changing the value of the variable `INTERVAL_DURATION` - default is 30 (seconds). *** ",
-	logStyle("#f0dd99")
+	"%c *** You can change the interval duration between clicks on the fly by changing the value of the variable `INTERVAL_DURATION_script` - default is 30 (seconds). *** ",
+	logStyle_script("#f0dd99")
+);
+console.info(
+	"%c *** UI Detected: New (Direct document) *** ",
+	logStyle_script("#7cde6f")
 );
 
-const currentTime = () => {
+const currentTime_script = () => {
 	const now = new Date();
 	const hours = now.getHours().toString().padStart(2, '0');
 	const minutes = now.getMinutes().toString().padStart(2, '0');
@@ -96,32 +96,27 @@ const currentTime = () => {
 	return `${hours}:${minutes}:${seconds}`;
 };
 
-//you can change this on the fly if you want
-let INTERVAL_DURATION = 30;
+let INTERVAL_DURATION_script = 30;
 
-const countdownDuration = () => Math.round(INTERVAL_DURATION);
+const countdownDuration_script = () => Math.round(INTERVAL_DURATION_script);
 
-let countdown = countdownDuration();
+let countdown_script = countdownDuration_script();
 
-/**
- * Interval to click the 'Create' button and reload the new window
- * every `INTERVAL_DURATION` milliseconds.
- */
 void setInterval(() => {
-	if (countdown > 0) {
-		statusElmt.style.backgroundColor = "#00688c";
-		statusElmt.innerHTML = `Clicking in <b>${countdown} seconds</b>`;
-		countdown--;
+	if (countdown_script > 0) {
+		statusElmt_script.style.backgroundColor = "#00688c";
+		statusElmt_script.innerHTML = `Clicking in <b>${countdown_script} seconds</b>`;
+		countdown_script--;
 		return;
 	}
 
-	sessionWindow.location.reload();
-	createBtn.click();
-	statusElmt.style.backgroundColor = "#44bd50";
-	statusElmt.innerHTML = `Create clicked!`;
+	sessionWindow_script.location.reload();
+	btnCreate_script.click();
+	statusElmt_script.style.backgroundColor = "#44bd50";
+	statusElmt_script.innerHTML = `Create clicked!`;
 	console.log(
-		`%c *** Clicked 'Create' at ${currentTime()} *** `,
-		logStyle("#7cde6f")
+		`%c *** Clicked 'Create' at ${currentTime_script()} *** `,
+		logStyle_script("#7cde6f")
 	);
-	countdown = countdownDuration();
+	countdown_script = countdownDuration_script();
 }, 1000);
