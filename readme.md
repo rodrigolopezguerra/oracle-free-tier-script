@@ -157,6 +157,16 @@ Sí, es seguro para uso personal. Solo automatiza clics en un formulario que tú
 
 Este script fue creado para ayudar a las personas a obtener una instancia gratuita de Oracle Cloud, que suelen agotarse rápidamente. Úsalo con paciencia y comprensión de que Oracle tiene disponibilidad limitada.
 
-Este script tiene SOLO fines educativo y nunca debe usarse contra los T&C de Oracle.
+Este script tiene SOLO fines educativos y nunca debe usarse contra los T&C de Oracle.
 
 ¡Buena suerte!
+
+---
+
+## Créditos
+
+Este script está basado en el trabajo original de [gardinbe](https://github.com/gardinbe/oracle-compute-instance-creation-script). 
+
+La versión original utilizaba un iframe que Oracle ha eliminado de su interfaz actual, por lo que este script fue actualizado para funcionar con la nueva UI de Oracle Cloud.
+
+Gracias a la comunidad por seguir mejorando y adaptando este tipo de herramientas.
